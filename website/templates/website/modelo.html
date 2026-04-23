@@ -37,6 +37,7 @@
       color: var(--text-main);
       font-family: "Inter", sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .app-shell {
@@ -143,6 +144,7 @@
     .main-panel {
       border-radius: var(--radius-xl);
       padding: 26px;
+      min-width: 0;
     }
 
     .topbar {
@@ -297,6 +299,7 @@
       gap: 8px;
       color: var(--text-soft);
       font-size: 0.84rem;
+      min-width: 0;
     }
 
     .dot {
@@ -325,6 +328,13 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       border-bottom-width: 1px;
+    }
+
+    .table-actions {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .tag {
@@ -455,10 +465,13 @@
     @media (max-width: 991px) {
       .app-shell {
         grid-template-columns: 1fr;
+        padding: 18px;
+        gap: 18px;
       }
 
       .app-sidebar {
         position: static;
+        padding: 18px;
       }
 
       .chart-grid,
@@ -468,6 +481,162 @@
       }
 
       .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toolbar {
+        width: 100%;
+      }
+
+      .sidebar-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .sidebar-tip {
+        margin-top: 4px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .app-shell {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .app-sidebar,
+      .main-panel {
+        border-radius: 20px;
+        padding: 16px;
+      }
+
+      .content-card,
+      .mini-card,
+      .list-card,
+      .info-card,
+      .form-shell {
+        border-radius: 16px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .subtitle {
+        font-size: 0.95rem;
+        line-height: 1.55;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .toolbar-chip {
+        grid-column: 1 / -1;
+        justify-content: center;
+      }
+
+      .btn-accent,
+      .btn-outline-surface,
+      .toolbar-chip {
+        width: 100%;
+        text-align: center;
+      }
+
+      .mini-card {
+        padding: 16px;
+      }
+
+      .mini-card .value {
+        font-size: 1.45rem;
+        line-height: 1.2;
+        word-break: break-word;
+      }
+
+      .content-card,
+      .list-card,
+      .info-card,
+      .form-shell {
+        padding: 16px;
+      }
+
+      .chart-shell {
+        padding: 14px;
+      }
+
+      .chart-legend {
+        gap: 10px;
+      }
+
+      .chart-legend-item {
+        width: 100%;
+        font-size: 0.8rem;
+      }
+
+      .sidebar-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .responsive-table thead {
+        display: none;
+      }
+
+      .responsive-table,
+      .responsive-table tbody,
+      .responsive-table tr,
+      .responsive-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .responsive-table tbody {
+        display: grid;
+        gap: 12px;
+      }
+
+      .responsive-table tr {
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .responsive-table td {
+        border: none;
+        padding: 8px 0;
+        text-align: left !important;
+      }
+
+      .responsive-table td::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 4px;
+        color: var(--text-soft);
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .table-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .table-actions a,
+      .form-shell .d-flex.flex-wrap.gap-2 > a,
+      .form-shell .d-flex.flex-wrap.gap-2 > button,
+      .info-card .d-flex.flex-wrap.gap-2 > a,
+      .info-card .d-flex.flex-wrap.gap-2 > button,
+      .content-card .d-flex.flex-wrap.gap-2 > a,
+      .content-card .d-flex.flex-wrap.gap-2 > button {
+        width: 100%;
+        text-align: center;
+      }
+
+      .page-footer {
         flex-direction: column;
       }
     }

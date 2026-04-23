@@ -8,7 +8,7 @@
   </div>
 
   <div class="table-responsive">
-    <table class="table align-middle">
+    <table class="table align-middle responsive-table">
       <thead>
         <tr>
           <th>Titulo</th>
@@ -22,20 +22,22 @@
       <tbody>
         {% for gasto in gastos %}
           <tr>
-            <td>{{ gasto.titulo }}</td>
-            <td><span class="tag">{{ gasto.get_categoria_display }}</span></td>
-            <td>{{ gasto.data|date:"d/m/Y" }}</td>
-            <td>
+            <td data-label="Titulo">{{ gasto.titulo }}</td>
+            <td data-label="Categoria"><span class="tag">{{ gasto.get_categoria_display }}</span></td>
+            <td data-label="Data">{{ gasto.data|date:"d/m/Y" }}</td>
+            <td data-label="Recorrente">
               {% if gasto.recorrente %}
                 <span class="text-success">Sim</span>
               {% else %}
                 <span class="text-secondary">Nao</span>
               {% endif %}
             </td>
-            <td class="text-end fw-semibold">R$ {{ gasto.valor|moeda_br }}</td>
-            <td class="text-end">
-              <a href="{% url 'gasto_editar' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem;">Editar</a>
-              <a href="{% url 'gasto_excluir' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem; border-color: rgba(244, 116, 88, 0.35);">Excluir</a>
+            <td data-label="Valor" class="text-end fw-semibold">R$ {{ gasto.valor|moeda_br }}</td>
+            <td data-label="Acoes" class="text-end">
+              <div class="table-actions">
+                <a href="{% url 'gasto_editar' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem;">Editar</a>
+                <a href="{% url 'gasto_excluir' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem; border-color: rgba(244, 116, 88, 0.35);">Excluir</a>
+              </div>
             </td>
           </tr>
         {% empty %}
