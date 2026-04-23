@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Gasto, MensagemContato, Meta
+from .models import Gasto, MensagemContato, Meta, Saldo
 
 
 @admin.register(Gasto)
@@ -21,3 +21,9 @@ class MensagemContatoAdmin(admin.ModelAdmin):
     list_display = ("nome", "email", "assunto", "lida", "created_at")
     list_filter = ("lida", "created_at")
     search_fields = ("nome", "email", "assunto")
+
+
+@admin.register(Saldo)
+class SaldoAdmin(admin.ModelAdmin):
+    list_display = ("usuario", "valor", "updated_at")
+    search_fields = ("usuario__username", "usuario__first_name", "usuario__last_name")

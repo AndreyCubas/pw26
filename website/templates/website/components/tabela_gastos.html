@@ -32,7 +32,7 @@
                 <span class="text-secondary">Nao</span>
               {% endif %}
             </td>
-            <td class="text-end fw-semibold">R$ {{ gasto.valor }}</td>
+            <td class="text-end fw-semibold">R$ {{ gasto.valor|moeda_br }}</td>
             <td class="text-end">
               <a href="{% url 'gasto_editar' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem;">Editar</a>
               <a href="{% url 'gasto_excluir' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem; border-color: rgba(244, 116, 88, 0.35);">Excluir</a>

@@ -26,7 +26,7 @@
     </article>
     <article class="mini-card">
       <div class="label">Total analisado</div>
-      <div class="value">R$ {{ total_gastos }}</div>
+      <div class="value">R$ {{ total_gastos|moeda_br }}</div>
       <div class="meta">Consolidado da tabela e dos graficos.</div>
     </article>
   </section>
@@ -43,7 +43,7 @@
         <div class="list-item">
           <div class="d-flex justify-content-between gap-3">
             <span>{{ item.categoria }}</span>
-            <strong>R$ {{ item.total }}</strong>
+            <strong>R$ {{ item.total|moeda_br }}</strong>
           </div>
         </div>
       {% endfor %}

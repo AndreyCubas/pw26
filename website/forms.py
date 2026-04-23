@@ -2,7 +2,11 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Gasto, MensagemContato, Meta
+from .models import Gasto, MensagemContato, Meta, Saldo
+
+
+class ISODateInput(forms.DateInput):
+    input_type = "date"
 
 
 class BaseStyledFormMixin:
@@ -72,11 +76,16 @@ class ContatoForm(BaseStyledFormMixin, forms.ModelForm):
 
 
 class GastoForm(BaseStyledFormMixin, forms.ModelForm):
+    data = forms.DateField(
+        label="Data",
+        input_formats=["%Y-%m-%d"],
+        widget=ISODateInput(format="%Y-%m-%d"),
+    )
+
     class Meta:
         model = Gasto
         fields = ("titulo", "categoria", "valor", "data", "recorrente", "observacao")
         widgets = {
-            "data": forms.DateInput(attrs={"type": "date"}),
             "observacao": forms.Textarea(attrs={"rows": 3}),
         }
 
@@ -86,13 +95,50 @@ class GastoForm(BaseStyledFormMixin, forms.ModelForm):
 
 
 class MetaFinanceiraForm(BaseStyledFormMixin, forms.ModelForm):
+    prazo = forms.DateField(
+        label="Prazo",
+        input_formats=["%Y-%m-%d"],
+        widget=ISODateInput(format="%Y-%m-%d"),
+    )
+
     class Meta:
         model = Meta
         fields = ("titulo", "descricao", "valor_alvo", "valor_atual", "prazo")
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 3}),
-            "prazo": forms.DateInput(attrs={"type": "date"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_bootstrap()
+
+
+class MetaAdicionarValorForm(BaseStyledFormMixin, forms.Form):
+    valor_adicional = forms.DecimalField(
+        label="Valor a adicionar",
+        min_value=0.01,
+        decimal_places=2,
+        max_digits=10,
+        widget=forms.NumberInput(attrs={"step": "0.01", "min": "0.01"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_bootstrap()
+
+
+class SaldoForm(BaseStyledFormMixin, forms.ModelForm):
+    valor = forms.DecimalField(
+        label="Saldo atual",
+        min_value=0,
+        decimal_places=2,
+        max_digits=12,
+        widget=forms.NumberInput(attrs={"step": "0.01", "min": "0"}),
+    )
+
+    class Meta:
+        model = Saldo
+        fields = ("valor",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

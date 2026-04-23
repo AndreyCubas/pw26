@@ -23,7 +23,7 @@
       {% for item in area_chart_items %}
         <span class="chart-legend-item">
           <span class="dot" style="background:{% cycle '#55d6c2' '#7c5cfc' '#f0c040' '#f47458' '#44b0ff' '#99f6e4' %}"></span>
-          {{ item.label }}: R$ {{ item.value|floatformat:0 }}
+          {{ item.label }}: R$ {{ item.value|moeda_br }}
         </span>
       {% endfor %}
     </div>

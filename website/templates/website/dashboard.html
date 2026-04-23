@@ -12,17 +12,17 @@
   <section class="card-grid">
     <article class="mini-card">
       <div class="label">Total de gastos</div>
-      <div class="value">R$ {{ total_gastos }}</div>
+      <div class="value">R$ {{ total_gastos|moeda_br }}</div>
       <div class="meta">Soma consolidada dos registros atuais.</div>
     </article>
     <article class="mini-card">
       <div class="label">Gasto medio</div>
-      <div class="value">R$ {{ gasto_medio|floatformat:2 }}</div>
+      <div class="value">R$ {{ gasto_medio|moeda_br }}</div>
       <div class="meta">Media calculada por lancamento.</div>
     </article>
     <article class="mini-card">
       <div class="label">Valor em metas</div>
-      <div class="value">R$ {{ total_metas }}</div>
+      <div class="value">R$ {{ total_metas|moeda_br }}</div>
       <div class="meta">Soma dos objetivos financeiros.</div>
     </article>
     <article class="mini-card">
@@ -47,7 +47,7 @@
         <div class="list-item">
           <div class="d-flex justify-content-between gap-3 mb-2">
             <strong>{{ item.categoria }}</strong>
-            <span>R$ {{ item.total }}</span>
+            <span>R$ {{ item.total|moeda_br }}</span>
           </div>
           <div class="progress mb-2">
             <div class="progress-bar" style="width: {{ item.percentual }}%; background: {{ item.cor }};"></div>

@@ -3,8 +3,10 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, TemplateView, UpdateView
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView
 
 from .forms import (
@@ -12,10 +14,12 @@ from .forms import (
     ContatoForm,
     GastoForm,
     LoginForm,
+    MetaAdicionarValorForm,
     MetaFinanceiraForm,
     RelatorioFiltroForm,
+    SaldoForm,
 )
-from .models import Gasto, Meta
+from .models import Gasto, Meta, Saldo
 from .services import build_dashboard_context
 
 
@@ -255,6 +259,32 @@ class MetaUpdateView(MetaUserMixin, BasePageMixin, UpdateView):
         return reverse_lazy("metas")
 
 
+class MetaAdicionarValorView(MetaUserMixin, BasePageMixin, SingleObjectMixin, FormView):
+    form_class = MetaAdicionarValorForm
+    template_name = "website/meta_add_valor.html"
+    page_title = "Adicionar valor a meta"
+    page_subtitle = "Some um novo valor ao progresso atual desta meta."
+    context_object_name = "meta"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["meta"] = self.object
+        return context
+
+    def form_valid(self, form):
+        self.object.valor_atual += form.cleaned_data["valor_adicional"]
+        self.object.save(update_fields=["valor_atual", "updated_at"])
+        messages.success(self.request, "Valor adicionado a meta com sucesso.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("metas")
+
+
 class MetaDeleteView(MetaUserMixin, BasePageMixin, DeleteView):
     template_name = "website/meta_confirm_delete.html"
     page_title = "Excluir meta"
@@ -264,4 +294,70 @@ class MetaDeleteView(MetaUserMixin, BasePageMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Meta excluida com sucesso.")
+        return super().delete(request, *args, **kwargs)
+
+
+class SaldoUserMixin(AuthPageMixin):
+    model = Saldo
+
+    def get_queryset(self):
+        return Saldo.objects.filter(usuario=self.request.user)
+
+
+class SaldoView(AuthPageMixin, BasePageMixin, TemplateView):
+    template_name = "website/saldo.html"
+    page_title = "Saldo"
+    page_subtitle = "Cadastre e acompanhe o saldo atual disponivel na sua conta."
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["saldo"] = Saldo.objects.filter(usuario=self.request.user).first()
+        return context
+
+
+class SaldoCreateView(AuthPageMixin, BasePageMixin, CreateView):
+    model = Saldo
+    form_class = SaldoForm
+    template_name = "website/saldo_form.html"
+    page_title = "Adicionar saldo"
+    page_subtitle = "Informe o saldo atual para acompanhar melhor seus gastos."
+
+    def dispatch(self, request, *args, **kwargs):
+        if Saldo.objects.filter(usuario=request.user).exists():
+            messages.info(request, "Voce ja possui um saldo cadastrado.")
+            return redirect("saldo")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.usuario = self.request.user
+        messages.success(self.request, "Saldo cadastrado com sucesso.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("saldo")
+
+
+class SaldoUpdateView(SaldoUserMixin, BasePageMixin, UpdateView):
+    form_class = SaldoForm
+    template_name = "website/saldo_form.html"
+    page_title = "Editar saldo"
+    page_subtitle = "Atualize o saldo da sua conta."
+
+    def form_valid(self, form):
+        messages.success(self.request, "Saldo atualizado com sucesso.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("saldo")
+
+
+class SaldoDeleteView(SaldoUserMixin, BasePageMixin, DeleteView):
+    template_name = "website/saldo_confirm_delete.html"
+    page_title = "Excluir saldo"
+    page_subtitle = "Confirme para remover o saldo permanentemente."
+    context_object_name = "saldo"
+    success_url = reverse_lazy("saldo")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Saldo excluido com sucesso.")
         return super().delete(request, *args, **kwargs)

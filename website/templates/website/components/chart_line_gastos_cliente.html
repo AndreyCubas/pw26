@@ -16,7 +16,7 @@
       {% for item in line_chart_items %}
         <span class="chart-legend-item">
           <span class="dot" style="background:#f0c040"></span>
-          {{ item.label }}: R$ {{ item.value|floatformat:0 }}
+          {{ item.label }}: R$ {{ item.value|moeda_br }}
         </span>
       {% endfor %}
     </div>

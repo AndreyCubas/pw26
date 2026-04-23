@@ -85,6 +85,22 @@ class Meta(TimeStampedModel):
         return max(restante, Decimal("0.00"))
 
 
+class Saldo(TimeStampedModel):
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="saldo",
+    )
+    valor = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    class Meta:
+        verbose_name = "Saldo"
+        verbose_name_plural = "Saldos"
+
+    def __str__(self):
+        return f"{self.usuario} - R$ {self.valor}"
+
+
 class MensagemContato(TimeStampedModel):
     nome = models.CharField(max_length=120)
     email = models.EmailField()

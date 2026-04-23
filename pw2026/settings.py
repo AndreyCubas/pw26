@@ -63,6 +63,9 @@ TEMPLATES = [
         "DIRS": [ BASE_DIR / "templates" ],
         "APP_DIRS": True,
         "OPTIONS": {
+            "builtins": [
+                "website.templatetags.currency_filters",
+            ],
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -78,27 +81,28 @@ WSGI_APPLICATION = "pw2026.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
-DATABASE_URL='postgresql://neondb_owner:npg_KWGFU2zbI5JN@ep-fragrant-base-acq22u9w-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-tmpPostgres = urlparse(DATABASE_URL)
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
-        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
+if DATABASE_URL:
+    tmp_postgres = urlparse(DATABASE_URL)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": tmp_postgres.path.replace("/", ""),
+            "USER": tmp_postgres.username,
+            "PASSWORD": tmp_postgres.password,
+            "HOST": tmp_postgres.hostname,
+            "PORT": tmp_postgres.port or 5432,
+            "OPTIONS": dict(parse_qsl(tmp_postgres.query)),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
