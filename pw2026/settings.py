@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from urllib.parse import urlparse, parse_qsl
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-aj1wn+7@+ybxxc3zmik%ur&q3apni92x&rke05ao0=)6)svgrq"
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-aj1wn+7@+ybxxc3zmik%ur&q3apni92x&rke05ao0=)6)svgrq")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
+VERCEL_URL = os.getenv("VERCEL_URL", "").strip()
+if VERCEL_URL:
+    ALLOWED_HOSTS.append(VERCEL_URL)
 
 
 # Application definition
@@ -81,7 +85,11 @@ WSGI_APPLICATION = "pw2026.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+DATABASE_URL = (
+    os.getenv("DATABASE_URL", "").strip()
+    or os.getenv("POSTGRES_URL", "").strip()
+    or os.getenv("POSTGRES_PRISMA_URL", "").strip()
+)
 
 if DATABASE_URL:
     tmp_postgres = urlparse(DATABASE_URL)
@@ -103,6 +111,11 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+if VERCEL_URL and not DATABASE_URL:
+    raise ImproperlyConfigured(
+        "SQLite nao pode ser usado no Vercel para escrita. Configure DATABASE_URL ou POSTGRES_URL com seu banco Neon."
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
