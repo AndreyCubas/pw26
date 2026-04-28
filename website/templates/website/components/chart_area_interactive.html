@@ -25,5 +25,8 @@
           <span class="chart-legend-item">
             <span class="dot" style="background: {{ slice.color }};"></span>
             {{ slice.label }}: R$ {{ slice.value|moeda_br }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
   </div>
-</div>
