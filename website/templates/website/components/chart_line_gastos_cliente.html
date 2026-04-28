@@ -1,24 +1,28 @@
 <div class="content-card">
   <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
     <div>
-      <div class="section-title">ChartLineGastosCliente</div>
-      <p class="section-copy">Leitura rapida do comportamento semanal dos gastos.</p>
+      <div class="section-title">Comportamento Semanal dos Gastos</div>
+        <p class="section-copy">Distribuicao semanal dos gastos exibida como gráfico de pizza.</p>
+      </div>
     </div>
-    <span class="tag">comparativo</span>
-  </div>
 
-  <div class="chart-shell">
-    <svg viewBox="0 0 320 150" class="w-100" role="img" aria-label="Grafico de linha de gastos">
-      <polyline points="{{ line_chart_points }}" fill="none" stroke="#f0c040" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    </svg>
+    <div class="chart-shell">
+      <svg viewBox="0 0 320 150" class="w-100" role="img" aria-label="Grafico de pizza semanal de gastos">
+        {% if line_chart_segments %}
+          {% for slice in line_chart_segments %}
+            <path d="{{ slice.d }}" fill="{{ slice.color }}"></path>
+          {% endfor %}
+          <circle cx="160" cy="75" r="40" fill="rgba(255, 255, 255, 0.08)"></circle>
+          <text x="160" y="75" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-size="16" font-weight="700">Sem</text>
+        {% else %}
+          <circle cx="160" cy="75" r="60" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+          <text x="160" y="75" text-anchor="middle" dominant-baseline="middle" fill="var(--text-soft)" font-size="14">Sem dados</text>
+        {% endif %}
+      </svg>
 
-    <div class="chart-legend">
-      {% for item in line_chart_items %}
-        <span class="chart-legend-item">
-          <span class="dot" style="background:#f0c040"></span>
-          {{ item.label }}: R$ {{ item.value|moeda_br }}
-        </span>
-      {% endfor %}
-    </div>
-  </div>
+      <div class="chart-legend">
+        {% for slice in line_chart_segments %}
+          <span class="chart-legend-item">
+            <span class="dot" style="background: {{ slice.color }};"></span>
+            {{ slice.label }}: R$ {{ slice.value|moeda_br }}
 </div>

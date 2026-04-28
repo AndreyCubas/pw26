@@ -1,31 +1,29 @@
 <div class="content-card">
   <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
     <div>
-      <div class="section-title">ChartAreaInteractive</div>
-      <p class="section-copy">Evolucao mensal dos gastos exibida como area interativa.</p>
+        <div class="section-title">Distribuição Mensal dos Gastos</div>
+        <p class="section-copy">Distribuicao mensal dos gastos exibida como gráfico de pizza.</p>
+      </div>
     </div>
-    <span class="tag">dados agregados</span>
-  </div>
 
-  <div class="chart-shell">
-    <svg viewBox="0 0 420 180" class="w-100" role="img" aria-label="Grafico de area de gastos">
-      <defs>
-        <linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="#55d6c2" stop-opacity="0.45"></stop>
-          <stop offset="100%" stop-color="#55d6c2" stop-opacity="0.04"></stop>
-        </linearGradient>
-      </defs>
-      <polygon points="{{ area_chart_fill }}" fill="url(#areaFill)"></polygon>
-      <polyline points="{{ area_chart_points }}" fill="none" stroke="#55d6c2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    </svg>
+    <div class="chart-shell">
+      <svg viewBox="0 0 420 180" class="w-100" role="img" aria-label="Grafico de pizza de gastos">
+        {% if area_chart_segments %}
+          {% for slice in area_chart_segments %}
+            <path d="{{ slice.d }}" fill="{{ slice.color }}"></path>
+          {% endfor %}
+          <circle cx="210" cy="90" r="50" fill="rgba(255, 255, 255, 0.08)"></circle>
+          <text x="210" y="90" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-size="18" font-weight="700">Gastos</text>
+        {% else %}
+          <circle cx="210" cy="90" r="80" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+          <text x="210" y="90" text-anchor="middle" dominant-baseline="middle" fill="var(--text-soft)" font-size="14">Sem dados</text>
+        {% endif %}
+      </svg>
 
-    <div class="chart-legend">
-      {% for item in area_chart_items %}
-        <span class="chart-legend-item">
-          <span class="dot" style="background:{% cycle '#55d6c2' '#7c5cfc' '#f0c040' '#f47458' '#44b0ff' '#99f6e4' %}"></span>
-          {{ item.label }}: R$ {{ item.value|moeda_br }}
-        </span>
-      {% endfor %}
-    </div>
+      <div class="chart-legend">
+        {% for slice in area_chart_segments %}
+          <span class="chart-legend-item">
+            <span class="dot" style="background: {{ slice.color }};"></span>
+            {{ slice.label }}: R$ {{ slice.value|moeda_br }}
   </div>
 </div>

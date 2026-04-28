@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, timedelta
 from decimal import Decimal
+from math import cos, radians, sin
 
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -149,6 +150,51 @@ def build_area_fill(points, width=420, height=180):
     return f"0,{height} {points} {width},{height}"
 
 
+def build_pie_segments(items, width=420, height=180):
+    if not items:
+        return []
+
+    radius = min(width, height) / 2 - 16
+    cx = width / 2
+    cy = height / 2
+    total = sum(item.value for item in items)
+
+    if total <= 0:
+        return []
+
+    segments = []
+    start_angle = 0.0
+
+    for index, item in enumerate(items):
+        value = item.value
+        if value <= 0:
+            continue
+
+        sweep = 360 * (value / total)
+        end_angle = start_angle + sweep
+
+        start_x = cx + radius * cos(radians(start_angle))
+        start_y = cy + radius * sin(radians(start_angle))
+        end_x = cx + radius * cos(radians(end_angle))
+        end_y = cy + radius * sin(radians(end_angle))
+
+        large_arc = 1 if sweep > 180 else 0
+        segments.append(
+            {
+                "d": (
+                    f"M {cx:.3f} {cy:.3f} L {start_x:.3f} {start_y:.3f} "
+                    f"A {radius:.3f} {radius:.3f} 0 {large_arc} 1 {end_x:.3f} {end_y:.3f} Z"
+                ),
+                "color": PALETA[index % len(PALETA)],
+                "label": item.label,
+                "value": item.value,
+            }
+        )
+        start_angle = end_angle
+
+    return segments
+
+
 def build_dashboard_context(user, *, periodo_dias=None, categoria=None):
     desde = None
     if periodo_dias is not None:
@@ -178,8 +224,10 @@ def build_dashboard_context(user, *, periodo_dias=None, categoria=None):
         "percentual_guardado": int((total_guardado / (total_metas or Decimal("1.00"))) * 100),
         "recorrentes_count": recorrentes_count,
         "area_chart_items": area_items,
+        "area_chart_segments": build_pie_segments(area_items),
         "area_chart_points": build_chart_points(area_items),
         "area_chart_fill": build_area_fill(build_chart_points(area_items)),
         "line_chart_items": line_items,
+        "line_chart_segments": build_pie_segments(line_items, width=320, height=150),
         "line_chart_points": build_chart_points(line_items, width=320, height=150),
     }
