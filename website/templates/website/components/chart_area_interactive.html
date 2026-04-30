@@ -8,20 +8,35 @@
 
     <div class="chart-shell">
       <svg viewBox="0 0 420 180" class="w-100" role="img" aria-label="Grafico de pizza de gastos">
-        {% if area_chart_segments %}
-          {% for slice in area_chart_segments %}
+        {% if pie_chart_segments %}
+          {% for slice in pie_chart_segments %}
             <path d="{{ slice.d }}" fill="{{ slice.color }}"></path>
           {% endfor %}
           <circle cx="210" cy="90" r="50" fill="rgba(255, 255, 255, 0.08)"></circle>
-          <text x="210" y="90" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-size="18" font-weight="700">Gastos</text>
+          <text x="210" y="90"
+                text-anchor="middle"
+                dominant-baseline="middle"
+                fill="#ffffff"
+                font-size="18"
+                font-weight="700">
+              Gastos
+          </text>
         {% else %}
-          <circle cx="210" cy="90" r="80" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
-          <text x="210" y="90" text-anchor="middle" dominant-baseline="middle" fill="var(--text-soft)" font-size="14">Sem dados</text>
+          <circle cx="210" cy="90" r="80"
+                  fill="rgba(255,255,255,0.05)"
+                  stroke="rgba(255,255,255,0.08)"
+                  stroke-width="2" />
+          <text x="210" y="90"
+                text-anchor="middle"
+                dominant-baseline="middle"
+                fill="var(--text-soft)"
+                font-size="14">
+            Sem dados
+          </text>
         {% endif %}
-      </svg>
-
+      </svg>  
       <div class="chart-legend">
-        {% for slice in area_chart_segments %}
+        {% for slice in pie_chart_segments %}
           <span class="chart-legend-item">
             <span class="dot" style="background: {{ slice.color }};"></span>
             {{ slice.label }}: R$ {{ slice.value|moeda_br }}
