@@ -224,7 +224,10 @@ def build_dashboard_context(user, *, periodo_dias=None, categoria=None):
         "percentual_guardado": int((total_guardado / (total_metas or Decimal("1.00"))) * 100),
         "recorrentes_count": recorrentes_count,
         "area_chart_items": area_items,
-        "area_chart_segments": build_pie_segments(area_items),
+        "pie_chart_segments": build_pie_segments([
+        ChartDataItem(label=item.categoria, value=float(item.total))
+        for item in _category_breakdown(gastos)
+        ]),
         "area_chart_points": build_chart_points(area_items),
         "area_chart_fill": build_area_fill(build_chart_points(area_items)),
         "line_chart_items": line_items,
