@@ -643,6 +643,56 @@
   </style>
   {% block extra_css %}{% endblock %}
 </head>
+{% block script %}
+<script>
+(function () {
+  const svg    = document.getElementById('pie-svg');
+  const legend = document.getElementById('pie-legend');
+  if (!svg || !legend) return;
+
+  const slices = Array.from(svg.querySelectorAll('.slice'));
+  const rows   = Array.from(legend.querySelectorAll('.legend-row'));
+  const cLabel = document.getElementById('pie-center-label');
+  const cVal   = document.getElementById('pie-center-val');
+
+  const total = slices.reduce((s, p) => s + parseFloat(p.dataset.value || 0), 0);
+
+  // Preenche percentuais na legenda
+  slices.forEach((p, i) => {
+    const pctEl = document.getElementById('pct-' + i);
+    if (pctEl) pctEl.textContent = Math.round((parseFloat(p.dataset.value) / total) * 100) + '%';
+  });
+
+  function fmt(v) {
+    return 'R$ ' + parseFloat(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  const totalFmt = fmt(total);
+
+  function activate(i) {
+    slices.forEach((p, j) => p.classList.toggle('faded', i != null && j !== i));
+    rows.forEach((r, j) => r.classList.toggle('active', j === i));
+
+    if (i == null) {
+      cLabel.textContent = 'Total';
+      cVal.textContent   = totalFmt;
+    } else {
+      cLabel.textContent = slices[i].dataset.label;
+      cVal.textContent   = fmt(slices[i].dataset.value);
+    }
+  }
+
+  slices.forEach((p, i) => {
+    p.addEventListener('mouseenter', () => activate(i));
+    p.addEventListener('mouseleave', () => activate(null));
+  });
+  rows.forEach((r, i) => {
+    r.addEventListener('mouseenter', () => activate(i));
+    r.addEventListener('mouseleave', () => activate(null));
+  });
+})();
+</script>
+{% endblock script %}
 <body>
   <div class="app-shell">
     {% if show_sidebar %}

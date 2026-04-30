@@ -1,47 +1,57 @@
-<div class="content-card">
-  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-    <div>
-        <div class="section-title">Distribuição Mensal dos Gastos</div>
-        <p class="section-copy">Distribuicao mensal dos gastos exibida como gráfico de pizza.</p>
+
+<div class="content-card pie-card">
+  <div class="pie-header">
+    <p class="pie-title">Distribuição por categoria</p>
+    <p class="pie-sub">Proporção dos gastos no período selecionado</p>
+  </div>
+
+  <div class="pie-body">
+    <div class="pie-svg-wrap">
+      <svg id="pie-svg" viewBox="0 0 200 200" class="pie-svg" role="img"
+           aria-label="Gráfico de rosca de gastos por categoria">
+        {% if pie_chart_segments %}
+          {% for slice in pie_chart_segments %}
+            <path class="slice"
+                  d="{{ slice.d }}"
+                  fill="{{ slice.color }}"
+                  data-label="{{ slice.label }}"
+                  data-value="{{ slice.value }}">
+            </path>
+          {% endfor %}
+          {# Buraco central do donut — ajuste r conforme seu viewBox #}
+          <circle cx="210" cy="90" r="56" fill="var(--color-background-primary)"></circle>
+        {% else %}
+          <circle cx="100" cy="100" r="72"
+                  fill="rgba(255,255,255,0.04)"
+                  stroke="var(--color-border-tertiary)"
+                  stroke-width="1"/>
+          <text x="100" y="100"
+                text-anchor="middle"
+                dominant-baseline="middle"
+                fill="var(--color-text-secondary)"
+                font-size="13">Sem dados</text>
+        {% endif %}
+      </svg>
+
+      <div class="pie-center" id="pie-center">
+        <p class="pie-center-label" id="pie-center-label">Total</p>
+        <p class="pie-center-val" id="pie-center-val">
+          R$ {{ total_gastos|moeda_br }}
+        </p>
       </div>
     </div>
 
-    <div class="chart-shell">
-      <svg viewBox="0 0 420 180" class="w-100" role="img" aria-label="Grafico de pizza de gastos">
-        {% if pie_chart_segments %}
-          {% for slice in pie_chart_segments %}
-            <path d="{{ slice.d }}" fill="{{ slice.color }}"></path>
-          {% endfor %}
-          <circle cx="210" cy="90" r="50" fill="rgba(255, 255, 255, 0.08)"></circle>
-          <text x="210" y="90"
-                text-anchor="middle"
-                dominant-baseline="middle"
-                fill="#ffffff"
-                font-size="18"
-                font-weight="700">
-              Gastos
-          </text>
-        {% else %}
-          <circle cx="210" cy="90" r="80"
-                  fill="rgba(255,255,255,0.05)"
-                  stroke="rgba(255,255,255,0.08)"
-                  stroke-width="2" />
-          <text x="210" y="90"
-                text-anchor="middle"
-                dominant-baseline="middle"
-                fill="var(--text-soft)"
-                font-size="14">
-            Sem dados
-          </text>
-        {% endif %}
-      </svg>  
-      <div class="chart-legend">
-        {% for slice in pie_chart_segments %}
-          <span class="chart-legend-item">
-            <span class="dot" style="background: {{ slice.color }};"></span>
-            {{ slice.label }}: R$ {{ slice.value|moeda_br }}
-          </span>
-        {% endfor %}
-      </div>
+    <div class="pie-legend" id="pie-legend">
+      {% for slice in pie_chart_segments %}
+        <div class="legend-row" data-i="{{ forloop.counter0 }}">
+          <span class="legend-dot" style="background:{{ slice.color }}"></span>
+          <div class="legend-info">
+            <div class="legend-label">{{ slice.label }}</div>
+            <div class="legend-val">R$ {{ slice.value|moeda_br }}</div>
+          </div>
+          <span class="legend-pct" id="pct-{{ forloop.counter0 }}"></span>
+        </div>
+      {% endfor %}
     </div>
   </div>
+</div>
