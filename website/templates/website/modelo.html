@@ -114,6 +114,17 @@
       grid-template-columns: {% if show_sidebar %}270px minmax(0, 1fr){% else %}minmax(0, 1fr){% endif %};
     }
 
+    /* Agrupa topbar + main na mesma coluna do grid (evita 3º filho direto quebrando o layout). */
+    .app-main-column {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-main-column > nav {
+      padding-inline: 26px;
+    }
+
     .app-sidebar,
     .main-panel,
     .content-card,
@@ -640,6 +651,10 @@
         padding: 16px;
       }
 
+      .app-main-column > nav {
+        padding-inline: 16px;
+      }
+
       .content-card,
       .mini-card,
       .list-card,
@@ -829,32 +844,35 @@
     {% if show_sidebar %}
       {% include "website/components/sidebar.html" %}
     {% endif %}
+    <div class="app-main-column">
+      <nav aria-label="Navegação principal da página">
+        <header class="topbar">
+          <div>
+            <h1>{{ page_title }}</h1>
+            <p class="subtitle">{{ page_subtitle }}</p>
+          </div>
+          <div class="toolbar">
+            {% if user.is_authenticated %}
+              <span class="toolbar-chip">
+                <i class="bi bi-person-circle me-2" aria-hidden="true"></i>{{ user.get_full_name|default:user.username }}
+              </span>
+              <a href="{% url 'saldo' %}" class="btn-outline-surface">Saldo</a>
+              <form action="{% url 'logout' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn-outline-surface">
+                  Sair
+                </button>
+              </form>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn-outline-surface">Login</a>
+              <a href="{% url 'cadastro' %}" class="btn-accent">Criar conta</a>
+            {% endif %}
+            {% block page_actions %}{% endblock %}
+          </div>
+        </header>
+      </nav>
 
-    <main class="main-panel" id="conteudo-principal">
-      <header class="topbar">
-        <div>
-          <h1>{{ page_title }}</h1>
-          <p class="subtitle">{{ page_subtitle }}</p>
-        </div>
-        <div class="toolbar">
-          {% if user.is_authenticated %}
-            <span class="toolbar-chip">
-              <i class="bi bi-person-circle me-2" aria-hidden="true"></i>{{ user.get_full_name|default:user.username }}
-            </span>
-            <a href="{% url 'saldo' %}" class="btn-outline-surface">Saldo</a>
-            <form action="{% url 'logout' %}" method="post" class="d-inline">
-              {% csrf_token %}
-              <button type="submit" class="btn-outline-surface">
-                Sair
-              </button>
-            </form>
-          {% else %}
-            <a href="{% url 'login' %}" class="btn-outline-surface">Login</a>
-            <a href="{% url 'cadastro' %}" class="btn-accent">Criar conta</a>
-          {% endif %}
-          {% block page_actions %}{% endblock %}
-        </div>
-      </header>
+      <main class="main-panel" id="conteudo-principal">
 
       {% if messages %}
         {% for message in messages %}
@@ -882,7 +900,8 @@
         <span>Projeto “pw26” feito por <a href="https://github.com/Joao-Valerio" target="_blank" rel="noopener noreferrer">João Valério</a>.</span>
         <span>{% now "d/m/Y" %}</span>
       </footer>
-    </main>
+      </main>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

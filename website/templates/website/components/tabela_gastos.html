@@ -35,6 +35,7 @@
             <td data-label="Valor" class="text-end fw-semibold">R$ {{ gasto.valor|moeda_br }}</td>
             <td data-label="Acoes" class="text-end">
               <div class="table-actions">
+                <a href="{% url 'gasto_detalhe' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem;">Detalhar</a>
                 <a href="{% url 'gasto_editar' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem;">Editar</a>
                 <a href="{% url 'gasto_excluir' gasto.pk %}" class="btn-outline-surface" style="padding: 6px 10px; font-size: 0.8rem; border-color: rgba(244, 116, 88, 0.35);">Excluir</a>
               </div>
