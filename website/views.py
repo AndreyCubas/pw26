@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, TemplateView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormView
 
@@ -51,14 +51,22 @@ class DashboardView(AuthPageMixin, BasePageMixin, TemplateView):
         return context
 
 
-class GastosView(AuthPageMixin, BasePageMixin, TemplateView):
+class GastosView(AuthPageMixin, BasePageMixin, ListView):
+    model = Gasto
     template_name = "website/gastos.html"
+    context_object_name = "gastos"
     page_title = "Gastos"
     page_subtitle = "Tabela com os principais lancamentos e distribuicao por categoria."
 
+    def get_queryset(self):
+        return Gasto.objects.filter(usuario=self.request.user).order_by("-data", "-created_at")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(build_dashboard_context(self.request.user))
+        dashboard_ctx = build_dashboard_context(self.request.user)
+        dashboard_ctx.pop("gastos", None)
+        context.update(dashboard_ctx)
+        context["gastos"] = context["object_list"]
         return context
 
 
@@ -220,6 +228,20 @@ class GastoDeleteView(GastoUserMixin, BasePageMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Gasto excluido com sucesso.")
         return super().delete(request, *args, **kwargs)
+
+
+class GastoDetailView(GastoUserMixin, BasePageMixin, DetailView):
+    template_name = "website/gasto_detail.html"
+    context_object_name = "gasto"
+    page_title = "Detalhe do gasto"
+    page_subtitle = "Consulte os dados deste lancamento."
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        g = self.object
+        context["page_title"] = g.titulo
+        context["page_subtitle"] = f"{g.get_categoria_display()} · {g.data.strftime('%d/%m/%Y')}"
+        return context
 
 
 class MetaUserMixin(AuthPageMixin):
