@@ -711,7 +711,12 @@
               <i class="bi bi-person-circle me-2"></i>{{ user.get_full_name|default:user.username }}
             </span>
             <a href="{% url 'saldo' %}" class="btn-outline-surface">Saldo</a>
-            <a href="{% url 'logout' %}" class="btn-outline-surface">Sair</a>
+                  <form action="{% url 'logout' %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn-outline-surface" style="cursor: pointer;">
+          Sair
+        </button>
+      </form>
           {% else %}
             <a href="{% url 'login' %}" class="btn-outline-surface">Login</a>
             <a href="{% url 'cadastro' %}" class="btn-accent">Criar conta</a>
@@ -743,7 +748,7 @@
       {% endif %}
 
       <footer class="page-footer">
-        <span>Projeto `pw26` feito por <a href="https://github.com/Joao-Valerio" target="_blank">João Valério</a>.</span>
+        <span>Projeto `pw26` feito por <a href="https://github.com/Joao-Valerio" target="_blank">João ama ex</a></span>
         <span>{% now "d/m/Y" %}</span>
       </footer>
     </main>
