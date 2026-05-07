@@ -1,16 +1,22 @@
-<div class="content-card">
-  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-    <div>
-        <div class="section-title">Distribuição Mensal dos Gastos</div>
-        <p class="section-copy">Distribuicao mensal dos gastos exibida como gráfico de pizza.</p>
-      </div>
-    </div>
 
-    <div class="chart-shell">
-      <svg viewBox="0 0 420 180" class="w-100" role="img" aria-label="Grafico de pizza de gastos">
-        {% if area_chart_segments %}
-          {% for slice in area_chart_segments %}
-            <path d="{{ slice.d }}" fill="{{ slice.color }}"></path>
+<div class="content-card pie-card">
+  <div class="pie-header">
+    <p class="pie-title">Distribuição por categoria</p>
+    <p class="pie-sub">Proporção dos gastos no período selecionado</p>
+  </div>
+
+  <div class="pie-body">
+    <div class="pie-svg-wrap">
+      <svg id="pie-svg" viewBox="0 0 200 200" class="pie-svg" role="img"
+           aria-label="Gráfico de rosca de gastos por categoria">
+        {% if pie_chart_segments %}
+          {% for slice in pie_chart_segments %}
+            <path class="slice"
+                  d="{{ slice.d }}"
+                  fill="{{ slice.color }}"
+                  data-label="{{ slice.label }}"
+                  data-value="{{ slice.value }}">
+            </path>
           {% endfor %}
           <circle cx="210" cy="90" r="50" fill="#f7f2ea"></circle>
           <text x="210" y="90" text-anchor="middle" dominant-baseline="middle" fill="#3f3a33" font-size="18" font-weight="700">Gastos</text>
@@ -20,13 +26,25 @@
         {% endif %}
       </svg>
 
-      <div class="chart-legend">
-        {% for slice in area_chart_segments %}
-          <span class="chart-legend-item">
-            <span class="dot" style="background: {{ slice.color }};"></span>
-            {{ slice.label }}: R$ {{ slice.value|moeda_br }}
-          </span>
-        {% endfor %}
+      <div class="pie-center" id="pie-center">
+        <p class="pie-center-label" id="pie-center-label">Total</p>
+        <p class="pie-center-val" id="pie-center-val">
+          R$ {{ total_gastos|moeda_br }}
+        </p>
       </div>
     </div>
+
+    <div class="pie-legend" id="pie-legend">
+      {% for slice in pie_chart_segments %}
+        <div class="legend-row" data-i="{{ forloop.counter0 }}">
+          <span class="legend-dot" style="background:{{ slice.color }}"></span>
+          <div class="legend-info">
+            <div class="legend-label">{{ slice.label }}</div>
+            <div class="legend-val">R$ {{ slice.value|moeda_br }}</div>
+          </div>
+          <span class="legend-pct" id="pct-{{ forloop.counter0 }}"></span>
+        </div>
+      {% endfor %}
+    </div>
   </div>
+</div>
