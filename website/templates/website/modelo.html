@@ -14,30 +14,95 @@
   <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
   <style>
     :root {
-      --app-bg: #0d1522;
-      --surface: #121d2d;
-      --surface-soft: #1a2638;
-      --stroke: rgba(255, 255, 255, 0.08);
-      --text-main: #eff4fb;
-      --text-soft: #97a4ba;
-      --accent: #55d6c2;
-      --accent-strong: #2ec2ac;
-      --warning: #f0c040;
-      --danger: #f47458;
+      color-scheme: light;
+      --sand-50: #fdfcfa;
+      --sand-100: #f7f2ea;
+      --sand-200: #ebe3d6;
+      --sand-300: #d4c9b5;
+      --white: #ffffff;
+      --sky-50: #f0f9ff;
+      --sky-100: #e0f2fe;
+      --sky-200: #bae6fd;
+      --sky-400: #38bdf8;
+      --sky-500: #0ea5e9;
+      --sky-600: #0284c7;
+      --sky-700: #0369a1;
+      --text-main: #3f3a33;
+      --text-soft: #6b6458;
+      --app-bg: var(--sand-100);
+      --surface: #ffffff;
+      --surface-soft: #faf6f0;
+      --stroke: rgba(63, 58, 51, 0.12);
+      --accent: var(--sky-500);
+      --accent-strong: var(--sky-600);
+      --accent-muted: rgba(14, 165, 233, 0.14);
+      --warning: #b8860b;
+      --danger: #c45c52;
       --radius-xl: 24px;
       --radius-lg: 18px;
       --radius-md: 14px;
-      --shadow-soft: 0 22px 50px rgba(2, 8, 20, 0.32);
+      --shadow-soft: 0 12px 40px rgba(63, 58, 51, 0.08);
+      --focus-ring: 0 0 0 3px rgba(14, 165, 233, 0.35);
+      --petrol: var(--sky-600);
+      --petrol-dark: var(--sky-700);
+      --petrol-deeper: var(--sand-200);
+      --petrol-light: var(--sky-400);
+      --petrol-pale: var(--sky-50);
+      --accent-dark: var(--sky-700);
+      --text-muted: var(--text-soft);
+      --border: rgba(63, 58, 51, 0.14);
+      --surface-page: var(--sand-100);
+      --font-display: "Inter", system-ui, sans-serif;
+      --font-body: "Inter", system-ui, sans-serif;
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-sm: 0 2px 8px rgba(63, 58, 51, 0.06);
+      --shadow-md: 0 8px 24px rgba(63, 58, 51, 0.1);
+      --shadow-lg: 0 20px 50px rgba(63, 58, 51, 0.12);
+      --nav-height: 68px;
+      --radius-sm: 10px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0.75rem;
+      z-index: 10000;
+      padding: 0.65rem 1rem;
+      background: var(--surface);
+      color: var(--text-main);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .skip-link:focus-visible {
+      left: 0.75rem;
+      outline: none;
+      box-shadow: var(--shadow-md), var(--focus-ring);
     }
 
     body {
-      background: radial-gradient(circle at top left, rgba(85, 214, 194, 0.10), transparent 22%),
-                  radial-gradient(circle at top right, rgba(124, 92, 252, 0.12), transparent 28%),
-                  var(--app-bg);
+      background:
+        radial-gradient(ellipse 80% 50% at 0% -10%, rgba(14, 165, 233, 0.08), transparent 50%),
+        radial-gradient(ellipse 60% 45% at 100% 0%, rgba(235, 227, 214, 0.85), transparent 42%),
+        var(--app-bg);
       color: var(--text-main);
-      font-family: "Inter", sans-serif;
+      font-family: "Inter", system-ui, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-tap-highlight-color: rgba(14, 165, 233, 0.15);
     }
 
     .app-shell {
@@ -56,10 +121,9 @@
     .list-card,
     .info-card,
     .form-shell {
-      background: rgba(18, 29, 45, 0.92);
+      background: var(--surface);
       border: 1px solid var(--stroke);
       box-shadow: var(--shadow-soft);
-      backdrop-filter: blur(12px);
     }
 
     .app-sidebar {
@@ -68,6 +132,7 @@
       position: sticky;
       top: 24px;
       height: fit-content;
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
     }
 
     .brand {
@@ -79,6 +144,12 @@
       font-weight: 700;
       font-size: 1.1rem;
       margin-bottom: 28px;
+      border-radius: var(--radius-md);
+    }
+
+    .brand:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .brand-mark {
@@ -87,8 +158,8 @@
       border-radius: 14px;
       display: grid;
       place-items: center;
-      color: #081018;
-      background: linear-gradient(135deg, var(--accent), #87f5e6);
+      color: var(--white);
+      background: linear-gradient(145deg, var(--sky-400), var(--sky-600));
       font-size: 1.1rem;
     }
 
@@ -114,14 +185,26 @@
       border-radius: 14px;
       color: var(--text-soft);
       text-decoration: none;
-      transition: 0.2s ease;
+      touch-action: manipulation;
+      transition: background-color var(--transition), color var(--transition), transform var(--transition);
     }
 
-    .sidebar-link:hover,
-    .sidebar-link.active {
-      background: rgba(85, 214, 194, 0.10);
-      color: var(--text-main);
+    .sidebar-link:hover {
+      background: var(--accent-muted);
+      color: var(--sky-700);
       transform: translateX(2px);
+    }
+
+    .sidebar-link.active {
+      background: linear-gradient(90deg, var(--sky-100), transparent);
+      color: var(--sky-700);
+      font-weight: 600;
+      border: 1px solid rgba(14, 165, 233, 0.2);
+    }
+
+    .sidebar-link:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .sidebar-badge {
@@ -129,14 +212,15 @@
       font-size: 0.72rem;
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(240, 192, 64, 0.14);
-      color: var(--warning);
+      background: var(--sky-100);
+      color: var(--sky-700);
     }
 
     .sidebar-tip {
       padding: 16px;
       border-radius: 18px;
-      background: linear-gradient(135deg, rgba(85, 214, 194, 0.12), rgba(124, 92, 252, 0.14));
+      background: linear-gradient(135deg, var(--sky-50), var(--sand-100));
+      border: 1px solid rgba(14, 165, 233, 0.12);
       color: var(--text-soft);
       font-size: 0.9rem;
     }
@@ -145,6 +229,7 @@
       border-radius: var(--radius-xl);
       padding: 26px;
       min-width: 0;
+      background: var(--surface);
     }
 
     .topbar {
@@ -161,8 +246,8 @@
       gap: 8px;
       padding: 6px 12px;
       border-radius: 999px;
-      background: rgba(85, 214, 194, 0.12);
-      color: var(--accent);
+      background: var(--accent-muted);
+      color: var(--sky-700);
       font-size: 0.78rem;
       font-weight: 600;
       margin-bottom: 14px;
@@ -172,6 +257,7 @@
       font-size: clamp(1.8rem, 3vw, 2.7rem);
       font-weight: 800;
       margin: 0 0 8px;
+      text-wrap: balance;
     }
 
     .subtitle {
@@ -196,22 +282,65 @@
       border: 1px solid var(--stroke);
       text-decoration: none;
       font-weight: 600;
+      touch-action: manipulation;
+      transition: background-color var(--transition), color var(--transition),
+        border-color var(--transition), box-shadow var(--transition), transform var(--transition);
     }
 
     .toolbar-chip {
       color: var(--text-soft);
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--surface-soft);
     }
 
     .btn-accent {
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #071117;
+      background: linear-gradient(135deg, var(--sky-400), var(--sky-600));
+      color: var(--white);
       border: none;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+    }
+
+    .btn-accent:hover {
+      color: var(--white);
+      filter: brightness(1.03);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-accent:focus-visible,
+    .btn-outline-surface:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
 
     .btn-outline-surface {
-      background: transparent;
+      background: var(--surface);
       color: var(--text-main);
+    }
+
+    .btn-outline-surface:hover {
+      background: var(--sky-50);
+      border-color: rgba(14, 165, 233, 0.35);
+      color: var(--sky-700);
+    }
+
+    button.btn-outline-surface {
+      cursor: pointer;
+    }
+
+    .page-footer a {
+      color: var(--sky-600);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .page-footer a:hover {
+      color: var(--sky-700);
+    }
+
+    .page-footer a:focus-visible {
+      outline: none;
+      border-radius: 4px;
+      box-shadow: var(--focus-ring);
     }
 
     .alert {
@@ -248,6 +377,7 @@
       font-size: 1.75rem;
       font-weight: 800;
       margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
     }
 
     .mini-card .meta {
@@ -276,8 +406,8 @@
       margin-top: 22px;
       padding: 18px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: var(--surface-soft);
+      border: 1px solid var(--stroke);
     }
 
     .chart-grid {
@@ -318,7 +448,7 @@
     .table {
       --bs-table-bg: transparent;
       --bs-table-color: var(--text-main);
-      --bs-table-border-color: rgba(255, 255, 255, 0.06);
+      --bs-table-border-color: var(--stroke);
       margin-bottom: 0;
     }
 
@@ -343,19 +473,19 @@
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 0.76rem;
-      background: rgba(85, 214, 194, 0.12);
-      color: var(--accent);
+      background: var(--accent-muted);
+      color: var(--sky-700);
     }
 
     .progress {
       height: 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.07);
+      background: var(--sand-200);
     }
 
     .progress-bar {
       border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), #87f5e6);
+      background: linear-gradient(90deg, var(--sky-400), var(--sky-600));
     }
 
     .list-card {
@@ -364,7 +494,7 @@
 
     .list-item {
       padding: 14px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--stroke);
     }
 
     .list-item:last-child {
@@ -387,8 +517,8 @@
       border-radius: 14px;
       display: grid;
       place-items: center;
-      background: rgba(85, 214, 194, 0.12);
-      color: var(--accent);
+      background: var(--accent-muted);
+      color: var(--sky-600);
       margin-bottom: 14px;
       font-size: 1.15rem;
     }
@@ -404,8 +534,8 @@
 
     .form-control,
     .form-select {
-      background: rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 255, 255, 0.08);
+      background: var(--surface-soft);
+      border-color: var(--stroke);
       color: var(--text-main);
       border-radius: 14px;
       padding: 12px 14px;
@@ -413,28 +543,28 @@
 
     .form-control:focus,
     .form-select:focus {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(85, 214, 194, 0.5);
+      background: var(--surface);
+      border-color: rgba(14, 165, 233, 0.55);
       color: var(--text-main);
-      box-shadow: 0 0 0 0.2rem rgba(85, 214, 194, 0.1);
+      box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.18);
     }
 
     .form-control option,
     .form-select option {
       background-color: var(--surface);
-      color: #ffffff;
+      color: var(--text-main);
       border-radius: var(--radius-md);
       padding: 0.35rem 0.5rem;
     }
 
     .form-control option:checked,
     .form-select option:checked {
-      background-color: var(--surface-soft);
-      color: #ffffff;
+      background-color: var(--sky-100);
+      color: var(--sky-700);
     }
 
     .form-control::placeholder {
-      color: #7f8ca3;
+      color: #9a9288;
     }
 
     .auth-wrapper {
@@ -445,7 +575,7 @@
     .page-footer {
       margin-top: 24px;
       padding-top: 18px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid var(--stroke);
       display: flex;
       justify-content: space-between;
       gap: 12px;
@@ -598,9 +728,9 @@
 
       .responsive-table tr {
         padding: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--stroke);
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.02);
+        background: var(--surface-soft);
       }
 
       .responsive-table td {
@@ -644,12 +774,13 @@
   {% block extra_css %}{% endblock %}
 </head>
 <body>
+  <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
   <div class="app-shell">
     {% if show_sidebar %}
       {% include "website/components/sidebar.html" %}
     {% endif %}
 
-    <main class="main-panel">
+    <main class="main-panel" id="conteudo-principal">
       <header class="topbar">
         <div>
           <h1>{{ page_title }}</h1>
@@ -658,10 +789,15 @@
         <div class="toolbar">
           {% if user.is_authenticated %}
             <span class="toolbar-chip">
-              <i class="bi bi-person-circle me-2"></i>{{ user.get_full_name|default:user.username }}
+              <i class="bi bi-person-circle me-2" aria-hidden="true"></i>{{ user.get_full_name|default:user.username }}
             </span>
             <a href="{% url 'saldo' %}" class="btn-outline-surface">Saldo</a>
-            <a href="{% url 'logout' %}" class="btn-outline-surface">Sair</a>
+            <form action="{% url 'logout' %}" method="post" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn-outline-surface">
+                Sair
+              </button>
+            </form>
           {% else %}
             <a href="{% url 'login' %}" class="btn-outline-surface">Login</a>
             <a href="{% url 'cadastro' %}" class="btn-accent">Criar conta</a>
@@ -672,7 +808,7 @@
 
       {% if messages %}
         {% for message in messages %}
-          <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+          <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}" role="status">
             {{ message }}
           </div>
         {% endfor %}
@@ -693,7 +829,7 @@
       {% endif %}
 
       <footer class="page-footer">
-        <span>Projeto `pw26` feito por <a href="https://github.com/Joao-Valerio" target="_blank">João Valério</a>.</span>
+        <span>Projeto “pw26” feito por <a href="https://github.com/Joao-Valerio" target="_blank" rel="noopener noreferrer">João Valério</a>.</span>
         <span>{% now "d/m/Y" %}</span>
       </footer>
     </main>

@@ -37,7 +37,14 @@ class ChartDataGasto:
     cor: str
 
 
-PALETA = ["#1A6B72", "#2A8A93", "#F0C040", "#E57A44", "#7C5CFC", "#2D9C5B"]
+PALETA = [
+    "#0284c7",
+    "#0ea5e9",
+    "#38bdf7",
+    "#7dd3fc",
+    "#c4a574",
+    "#0f766e",
+]
 
 
 def _safe_list(queryset):
