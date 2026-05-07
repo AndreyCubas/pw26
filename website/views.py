@@ -361,3 +361,8 @@ class SaldoDeleteView(SaldoUserMixin, BasePageMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Saldo excluido com sucesso.")
         return super().delete(request, *args, **kwargs)
+
+class InicioView(TemplateView):
+    template_name = "website/inicio.html"
+    page_title = "Inicio"
+    page_subtitle = "Inicio da Página"
