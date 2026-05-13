@@ -1,30 +1,43 @@
+{# Série semanal: linha + área (dados em line_chart_items / line_chart_points) #}
 <div class="content-card">
-  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-2">
     <div>
-      <div class="section-title">Comportamento Semanal dos Gastos</div>
-        <p class="section-copy">Distribuicao semanal dos gastos exibida como gráfico de pizza.</p>
-      </div>
+      <div class="section-title">Comportamento semanal dos gastos</div>
+      <p class="section-copy mb-0">Total por semana (últimas 4 semanas) em gráfico de linha.</p>
     </div>
+  </div>
 
-    <div class="chart-shell">
-      <svg viewBox="0 0 320 150" class="w-100" role="img" aria-label="Grafico de pizza semanal de gastos">
-        {% if line_chart_segments %}
-          {% for slice in line_chart_segments %}
-            <path d="{{ slice.d }}" fill="{{ slice.color }}"></path>
-          {% endfor %}
-          <circle cx="160" cy="75" r="40" fill="#f7f2ea"></circle>
-          <text x="160" y="75" text-anchor="middle" dominant-baseline="middle" fill="#3f3a33" font-size="16" font-weight="700">Sem</text>
-        {% else %}
-          <circle cx="160" cy="75" r="60" fill="#faf6f0" stroke="rgba(63, 58, 51, 0.12)" stroke-width="2" />
-          <text x="160" y="75" text-anchor="middle" dominant-baseline="middle" fill="var(--text-soft)" font-size="14">Sem dados</text>
-        {% endif %}
-      </svg>
+  <div class="chart-shell">
+    <svg class="weekly-line-chart" viewBox="0 0 320 150" preserveAspectRatio="xMidYMid meet" role="img"
+         aria-label="Evolução semanal dos gastos">
+      <defs>
+        <linearGradient id="weekly-area-gradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.28"></stop>
+          <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.04"></stop>
+        </linearGradient>
+      </defs>
+      {% if line_chart_area_polygon %}
+        <polygon fill="url(#weekly-area-gradient)" points="{{ line_chart_area_polygon }}"></polygon>
+        <polyline class="weekly-line-chart__line"
+                  fill="none"
+                  stroke="#0284c7"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  points="{{ line_chart_points }}"></polyline>
+      {% else %}
+        <rect x="0" y="0" width="320" height="150" fill="#faf6f0" rx="8"></rect>
+        <text x="160" y="80" text-anchor="middle" fill="#6b6458" font-size="14">Sem dados no período</text>
+      {% endif %}
+    </svg>
 
-      <div class="chart-legend">
-        {% for slice in line_chart_segments %}
-          <span class="chart-legend-item">
-            <span class="dot" style="background: {{ slice.color }};"></span>
-            {{ slice.label }}: R$ {{ slice.value|moeda_br }}
-          </span>
-        {% endfor %}
-      </div>
+    <div class="chart-legend">
+      {% for row in line_chart_legend %}
+        <span class="chart-legend-item">
+          <span class="dot" style="background: {{ row.color }};"></span>
+          {{ row.label }}: R$ {{ row.value|moeda_br }}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+</div>

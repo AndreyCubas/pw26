@@ -884,7 +884,7 @@
 
       {% if show_sidebar %}
         {% block content_wrapper_start %}{% endblock %}
-      {% else %}
+      {% elif not skip_auth_wrapper %}
         <div class="auth-wrapper">
       {% endif %}
 
@@ -892,7 +892,7 @@
 
       {% if show_sidebar %}
         {% block content_wrapper_end %}{% endblock %}
-      {% else %}
+      {% elif not skip_auth_wrapper %}
         </div>
       {% endif %}
 

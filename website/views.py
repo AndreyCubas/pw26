@@ -31,12 +31,16 @@ class BasePageMixin:
     page_title = "Painel financeiro"
     page_subtitle = "Acompanhe indicadores, metas e gastos em um unico fluxo."
     show_sidebar = True
+    # Quando show_sidebar é False, o modelo usa .auth-wrapper (max-width 560px) para login/cadastro.
+    # Landing pages devem definir True para ocupar a largura do painel.
+    skip_auth_wrapper = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.setdefault("page_title", self.page_title)
         context.setdefault("page_subtitle", self.page_subtitle)
         context.setdefault("show_sidebar", self.show_sidebar)
+        context.setdefault("skip_auth_wrapper", self.skip_auth_wrapper)
         return context
 
 
@@ -384,7 +388,9 @@ class SaldoDeleteView(SaldoUserMixin, BasePageMixin, DeleteView):
         messages.success(self.request, "Saldo excluido com sucesso.")
         return super().delete(request, *args, **kwargs)
 
-class InicioView(TemplateView):
+class InicioView(BasePageMixin, TemplateView):
     template_name = "website/inicio.html"
-    page_title = "Inicio"
-    page_subtitle = "Inicio da Página"
+    page_title = "Início"
+    page_subtitle = ""
+    show_sidebar = False
+    skip_auth_wrapper = True

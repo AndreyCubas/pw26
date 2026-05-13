@@ -27,7 +27,8 @@ from .views import (
 )
 
 urlpatterns = [
-    #path("", InicioView.as_view(), name="inicio"),
+    path("inicio/", InicioView.as_view(), name="inicio"),
+    path("", RedirectView.as_view(pattern_name="inicio", permanent=False)),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path("gastos/", GastosView.as_view(), name="gastos"),
     path("gastos/novo/", GastoCreateView.as_view(), name="gasto_novo"),
@@ -49,8 +50,5 @@ urlpatterns = [
     path("contato/", ContatoView.as_view(), name="contato"),
     path("cadastro/", CadastroView.as_view(), name="cadastro"),
     path("logout/", UsuarioLogoutView.as_view(), name="logout"),
-    path("", RedirectView.as_view(url="login/"), name="home_redirect"),
     path("login/", UsuarioLoginView.as_view(), name="login"),
-    
-    
 ]

@@ -138,15 +138,16 @@ def build_chart_points(items, width=420, height=180):
     if not items:
         return ""
 
-    max_value = max(item.value for item in items) or 1
+    max_value = max(float(item.value) for item in items) or 1.0
     if len(items) == 1:
-        return f"0,{height}"
+        y = round(height - ((float(items[0].value) / max_value) * (height - 20)), 2)
+        return f"0,{y} {width},{y}"
 
     step_x = width / (len(items) - 1)
     points = []
     for index, item in enumerate(items):
         x = round(index * step_x, 2)
-        y = round(height - ((item.value / max_value) * (height - 20)), 2)
+        y = round(height - ((float(item.value) / max_value) * (height - 20)), 2)
         points.append(f"{x},{y}")
     return " ".join(points)
 
@@ -164,39 +165,50 @@ def build_pie_segments(items, width=420, height=180):
     radius = min(width, height) / 2 - 16
     cx = width / 2
     cy = height / 2
-    total = sum(item.value for item in items)
+    total = sum(max(0.0, float(item.value)) for item in items)
 
     if total <= 0:
         return []
 
     segments = []
     start_angle = 0.0
+    seg_idx = 0
 
-    for index, item in enumerate(items):
-        value = item.value
+    for item in items:
+        value = float(item.value)
         if value <= 0:
             continue
 
         sweep = 360 * (value / total)
         end_angle = start_angle + sweep
 
-        start_x = cx + radius * cos(radians(start_angle))
-        start_y = cy + radius * sin(radians(start_angle))
-        end_x = cx + radius * cos(radians(end_angle))
-        end_y = cy + radius * sin(radians(end_angle))
+        if sweep >= 359.99:
+            r = radius
+            d_path = (
+                f"M {cx:.3f} {cy:.3f} L {cx + r:.3f} {cy:.3f} "
+                f"A {r:.3f} {r:.3f} 0 1 1 {cx - r:.3f} {cy:.3f} "
+                f"A {r:.3f} {r:.3f} 0 1 1 {cx + r:.3f} {cy:.3f} Z"
+            )
+        else:
+            start_x = cx + radius * cos(radians(start_angle))
+            start_y = cy + radius * sin(radians(start_angle))
+            end_x = cx + radius * cos(radians(end_angle))
+            end_y = cy + radius * sin(radians(end_angle))
+            large_arc = 1 if sweep > 180 else 0
+            d_path = (
+                f"M {cx:.3f} {cy:.3f} L {start_x:.3f} {start_y:.3f} "
+                f"A {radius:.3f} {radius:.3f} 0 {large_arc} 1 {end_x:.3f} {end_y:.3f} Z"
+            )
 
-        large_arc = 1 if sweep > 180 else 0
         segments.append(
             {
-                "d": (
-                    f"M {cx:.3f} {cy:.3f} L {start_x:.3f} {start_y:.3f} "
-                    f"A {radius:.3f} {radius:.3f} 0 {large_arc} 1 {end_x:.3f} {end_y:.3f} Z"
-                ),
-                "color": PALETA[index % len(PALETA)],
+                "d": d_path,
+                "color": PALETA[seg_idx % len(PALETA)],
                 "label": item.label,
                 "value": item.value,
             }
         )
+        seg_idx += 1
         start_angle = end_angle
 
     return segments
@@ -218,6 +230,7 @@ def build_dashboard_context(user, *, periodo_dias=None, categoria=None):
 
     area_items = _monthly_series(gastos)
     line_items = _weekly_series(gastos)
+    line_pts = build_chart_points(line_items, width=320, height=150)
 
     return {
         "gastos": gastos,
@@ -231,13 +244,27 @@ def build_dashboard_context(user, *, periodo_dias=None, categoria=None):
         "percentual_guardado": int((total_guardado / (total_metas or Decimal("1.00"))) * 100),
         "recorrentes_count": recorrentes_count,
         "area_chart_items": area_items,
-        "pie_chart_segments": build_pie_segments([
-        ChartDataItem(label=item.categoria, value=float(item.total))
-        for item in _category_breakdown(gastos)
-        ]),
+        "pie_chart_segments": build_pie_segments(
+            [
+                ChartDataItem(label=item.categoria, value=float(item.total))
+                for item in _category_breakdown(gastos)
+            ],
+            width=200,
+            height=200,
+        ),
         "area_chart_points": build_chart_points(area_items),
         "area_chart_fill": build_area_fill(build_chart_points(area_items)),
         "line_chart_items": line_items,
-        "line_chart_segments": build_pie_segments(line_items, width=320, height=150),
-        "line_chart_points": build_chart_points(line_items, width=320, height=150),
+        "line_chart_points": line_pts,
+        "line_chart_area_polygon": (
+            f"0,150 {line_pts} 320,150" if line_pts else ""
+        ),
+        "line_chart_legend": [
+            {
+                "label": item.label,
+                "value": item.value,
+                "color": PALETA[i % len(PALETA)],
+            }
+            for i, item in enumerate(line_items)
+        ],
     }

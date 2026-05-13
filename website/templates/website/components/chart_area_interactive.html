@@ -1,4 +1,4 @@
-
+{# Gráfico de rosca: viewBox 200x200 alinhado a build_pie_segments(..., 200, 200) #}
 <div class="content-card pie-card">
   <div class="pie-header">
     <p class="pie-title">Distribuição por categoria</p>
@@ -7,30 +7,25 @@
 
   <div class="pie-body">
     <div class="pie-svg-wrap">
-      <svg id="pie-svg" viewBox="0 0 200 200" class="pie-svg" role="img"
-           aria-label="Gráfico de rosca de gastos por categoria">
+      <svg id="pie-svg" class="pie-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" role="img"
+           aria-label="Gráfico de gastos por categoria">
         {% if pie_chart_segments %}
           {% for slice in pie_chart_segments %}
             <path class="slice"
                   d="{{ slice.d }}"
                   fill="{{ slice.color }}"
                   data-label="{{ slice.label }}"
-                  data-value="{{ slice.value }}">
-            </path>
+                  data-value="{{ slice.value }}"></path>
           {% endfor %}
-          <circle cx="210" cy="90" r="50" fill="#f7f2ea"></circle>
-          <text x="210" y="90" text-anchor="middle" dominant-baseline="middle" fill="#3f3a33" font-size="18" font-weight="700">Gastos</text>
         {% else %}
-          <circle cx="210" cy="90" r="80" fill="#faf6f0" stroke="rgba(63, 58, 51, 0.12)" stroke-width="2" />
-          <text x="210" y="90" text-anchor="middle" dominant-baseline="middle" fill="var(--text-soft)" font-size="14">Sem dados</text>
+          <circle cx="100" cy="100" r="72" fill="#faf6f0" stroke="rgba(63, 58, 51, 0.12)" stroke-width="2"></circle>
+          <text x="100" y="100" text-anchor="middle" dominant-baseline="middle" fill="#6b6458" font-size="14">Sem dados</text>
         {% endif %}
       </svg>
 
       <div class="pie-center" id="pie-center">
         <p class="pie-center-label" id="pie-center-label">Total</p>
-        <p class="pie-center-val" id="pie-center-val">
-          R$ {{ total_gastos|moeda_br }}
-        </p>
+        <p class="pie-center-val" id="pie-center-val">R$ {{ total_gastos|moeda_br }}</p>
       </div>
     </div>
 
