@@ -12,12 +12,29 @@ from django.views.generic.edit import FormView
 from .forms import (
     CadastroForm,
     ContatoForm,
+    DELETE_GASTO,
+    DELETE_META,
+    DELETE_SALDO,
+    DeleteShellContextMixin,
+    FormShellContextMixin,
     GastoForm,
     LoginForm,
     MetaAdicionarValorForm,
     MetaFinanceiraForm,
     RelatorioFiltroForm,
     SaldoForm,
+    SHELL_CADASTRO,
+    SHELL_CONTATO,
+    SHELL_GASTO_CREATE,
+    SHELL_GASTO_UPDATE,
+    SHELL_LOGIN,
+    SHELL_META_ADD_VALOR,
+    SHELL_META_CREATE,
+    SHELL_META_UPDATE,
+    SHELL_SALDO_CREATE,
+    SHELL_SALDO_UPDATE,
+    TEMPLATE_CONFIRM_DELETE,
+    TEMPLATE_FORM_SHELL,
 )
 from .models import Gasto, Meta, Saldo
 from .services import build_dashboard_context
@@ -144,12 +161,11 @@ class SobreView(BasePageMixin, TemplateView):
     page_subtitle = "Resumo de como os modulos Django foram organizados a partir do diagrama."
 
 
-class ContatoView(BasePageMixin, FormView):
-    template_name = "website/contato.html"
+class ContatoView(FormShellContextMixin, BasePageMixin, FormView):
+    template_name = TEMPLATE_FORM_SHELL
     form_class = ContatoForm
+    form_shell_config = SHELL_CONTATO
     success_url = reverse_lazy("contato")
-    page_title = "Contato"
-    page_subtitle = "Use o formulario para enviar duvidas, feedbacks ou pedidos de suporte."
 
     def form_valid(self, form):
         form.save()
@@ -157,21 +173,19 @@ class ContatoView(BasePageMixin, FormView):
         return super().form_valid(form)
 
 
-class UsuarioLoginView(BasePageMixin, DjangoLoginView):
-    template_name = "website/login.html"
+class UsuarioLoginView(FormShellContextMixin, BasePageMixin, DjangoLoginView):
+    template_name = TEMPLATE_FORM_SHELL
     form_class = LoginForm
+    form_shell_config = SHELL_LOGIN
     redirect_authenticated_user = True
-    page_title = "Login"
-    page_subtitle = "Entre para acessar o painel financeiro."
     show_sidebar = False
 
 
-class CadastroView(BasePageMixin, FormView):
-    template_name = "website/singup.html"
+class CadastroView(FormShellContextMixin, BasePageMixin, FormView):
+    template_name = TEMPLATE_FORM_SHELL
     form_class = CadastroForm
+    form_shell_config = SHELL_CADASTRO
     success_url = reverse_lazy("dashboard")
-    page_title = "Criar conta"
-    page_subtitle = "Cadastre-se para começar a registrar gastos, metas e relatorios."
     show_sidebar = False
 
     def form_valid(self, form):
@@ -192,12 +206,11 @@ class GastoUserMixin(AuthPageMixin):
         return Gasto.objects.filter(usuario=self.request.user)
 
 
-class GastoCreateView(AuthPageMixin, BasePageMixin, CreateView):
+class GastoCreateView(FormShellContextMixin, AuthPageMixin, BasePageMixin, CreateView):
     model = Gasto
     form_class = GastoForm
-    template_name = "website/gasto_form.html"
-    page_title = "Novo gasto"
-    page_subtitle = "Registre um lancamento para acompanhar no painel."
+    template_name = TEMPLATE_FORM_SHELL
+    form_shell_config = SHELL_GASTO_CREATE
 
     def form_valid(self, form):
         form.instance.usuario = self.request.user
@@ -208,11 +221,10 @@ class GastoCreateView(AuthPageMixin, BasePageMixin, CreateView):
         return reverse_lazy("gastos")
 
 
-class GastoUpdateView(GastoUserMixin, BasePageMixin, UpdateView):
+class GastoUpdateView(FormShellContextMixin, GastoUserMixin, BasePageMixin, UpdateView):
     form_class = GastoForm
-    template_name = "website/gasto_form.html"
-    page_title = "Editar gasto"
-    page_subtitle = "Atualize os dados deste lancamento."
+    template_name = TEMPLATE_FORM_SHELL
+    form_shell_config = SHELL_GASTO_UPDATE
 
     def form_valid(self, form):
         messages.success(self.request, "Gasto atualizado com sucesso.")
@@ -222,10 +234,9 @@ class GastoUpdateView(GastoUserMixin, BasePageMixin, UpdateView):
         return reverse_lazy("gastos")
 
 
-class GastoDeleteView(GastoUserMixin, BasePageMixin, DeleteView):
-    template_name = "website/gasto_confirm_delete.html"
-    page_title = "Excluir gasto"
-    page_subtitle = "Confirme para remover o lancamento permanentemente."
+class GastoDeleteView(DeleteShellContextMixin, GastoUserMixin, BasePageMixin, DeleteView):
+    template_name = TEMPLATE_CONFIRM_DELETE
+    delete_shell_config = DELETE_GASTO
     context_object_name = "gasto"
     success_url = reverse_lazy("gastos")
 
@@ -255,12 +266,11 @@ class MetaUserMixin(AuthPageMixin):
         return Meta.objects.filter(usuario=self.request.user)
 
 
-class MetaCreateView(AuthPageMixin, BasePageMixin, CreateView):
+class MetaCreateView(FormShellContextMixin, AuthPageMixin, BasePageMixin, CreateView):
     model = Meta
     form_class = MetaFinanceiraForm
-    template_name = "website/meta_form.html"
-    page_title = "Nova meta"
-    page_subtitle = "Defina um objetivo financeiro e acompanhe o progresso."
+    template_name = TEMPLATE_FORM_SHELL
+    form_shell_config = SHELL_META_CREATE
 
     def form_valid(self, form):
         form.instance.usuario = self.request.user
@@ -271,11 +281,10 @@ class MetaCreateView(AuthPageMixin, BasePageMixin, CreateView):
         return reverse_lazy("metas")
 
 
-class MetaUpdateView(MetaUserMixin, BasePageMixin, UpdateView):
+class MetaUpdateView(FormShellContextMixin, MetaUserMixin, BasePageMixin, UpdateView):
     form_class = MetaFinanceiraForm
-    template_name = "website/meta_form.html"
-    page_title = "Editar meta"
-    page_subtitle = "Atualize titulo, valores ou prazo desta meta."
+    template_name = TEMPLATE_FORM_SHELL
+    form_shell_config = SHELL_META_UPDATE
 
     def form_valid(self, form):
         messages.success(self.request, "Meta atualizada com sucesso.")
@@ -285,11 +294,10 @@ class MetaUpdateView(MetaUserMixin, BasePageMixin, UpdateView):
         return reverse_lazy("metas")
 
 
-class MetaAdicionarValorView(MetaUserMixin, BasePageMixin, SingleObjectMixin, FormView):
+class MetaAdicionarValorView(FormShellContextMixin, MetaUserMixin, BasePageMixin, SingleObjectMixin, FormView):
     form_class = MetaAdicionarValorForm
-    template_name = "website/meta_add_valor.html"
-    page_title = "Adicionar valor a meta"
-    page_subtitle = "Some um novo valor ao progresso atual desta meta."
+    template_name = TEMPLATE_FORM_SHELL
+    form_shell_config = SHELL_META_ADD_VALOR
     context_object_name = "meta"
 
     def dispatch(self, request, *args, **kwargs):
@@ -311,10 +319,9 @@ class MetaAdicionarValorView(MetaUserMixin, BasePageMixin, SingleObjectMixin, Fo
         return reverse_lazy("metas")
 
 
-class MetaDeleteView(MetaUserMixin, BasePageMixin, DeleteView):
-    template_name = "website/meta_confirm_delete.html"
-    page_title = "Excluir meta"
-    page_subtitle = "Confirme para remover esta meta permanentemente."
+class MetaDeleteView(DeleteShellContextMixin, MetaUserMixin, BasePageMixin, DeleteView):
+    template_name = TEMPLATE_CONFIRM_DELETE
+    delete_shell_config = DELETE_META
     context_object_name = "meta"
     success_url = reverse_lazy("metas")
 
@@ -341,12 +348,11 @@ class SaldoView(AuthPageMixin, BasePageMixin, TemplateView):
         return context
 
 
-class SaldoCreateView(AuthPageMixin, BasePageMixin, CreateView):
+class SaldoCreateView(FormShellContextMixin, AuthPageMixin, BasePageMixin, CreateView):
     model = Saldo
     form_class = SaldoForm
-    template_name = "website/saldo_form.html"
-    page_title = "Adicionar saldo"
-    page_subtitle = "Informe o saldo atual para acompanhar melhor seus gastos."
+    template_name = TEMPLATE_FORM_SHELL
+    form_shell_config = SHELL_SALDO_CREATE
 
     def dispatch(self, request, *args, **kwargs):
         if Saldo.objects.filter(usuario=request.user).exists():
@@ -363,11 +369,10 @@ class SaldoCreateView(AuthPageMixin, BasePageMixin, CreateView):
         return reverse_lazy("saldo")
 
 
-class SaldoUpdateView(SaldoUserMixin, BasePageMixin, UpdateView):
+class SaldoUpdateView(FormShellContextMixin, SaldoUserMixin, BasePageMixin, UpdateView):
     form_class = SaldoForm
-    template_name = "website/saldo_form.html"
-    page_title = "Editar saldo"
-    page_subtitle = "Atualize o saldo da sua conta."
+    template_name = TEMPLATE_FORM_SHELL
+    form_shell_config = SHELL_SALDO_UPDATE
 
     def form_valid(self, form):
         messages.success(self.request, "Saldo atualizado com sucesso.")
@@ -377,16 +382,16 @@ class SaldoUpdateView(SaldoUserMixin, BasePageMixin, UpdateView):
         return reverse_lazy("saldo")
 
 
-class SaldoDeleteView(SaldoUserMixin, BasePageMixin, DeleteView):
-    template_name = "website/saldo_confirm_delete.html"
-    page_title = "Excluir saldo"
-    page_subtitle = "Confirme para remover o saldo permanentemente."
+class SaldoDeleteView(DeleteShellContextMixin, SaldoUserMixin, BasePageMixin, DeleteView):
+    template_name = TEMPLATE_CONFIRM_DELETE
+    delete_shell_config = DELETE_SALDO
     context_object_name = "saldo"
     success_url = reverse_lazy("saldo")
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Saldo excluido com sucesso.")
         return super().delete(request, *args, **kwargs)
+
 
 class InicioView(BasePageMixin, TemplateView):
     template_name = "website/inicio.html"

@@ -1,0 +1,92 @@
+{% extends "website/modelo.html" %}
+
+{% block title %}{{ page_title }} | FinTrack Django{% endblock %}
+
+{% block page_actions %}
+  {% if page_action_url %}
+    <a href="{{ page_action_url }}" class="btn-outline-surface">{{ page_action_label }}</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% if form_variant == "meta_add_value" %}
+    <section class="content-grid">
+      <section class="form-shell">
+        <div class="section-title mb-2">{{ page_title }}</div>
+        <p class="section-copy mb-4">{{ page_subtitle }}</p>
+        {% include "components/forms.html" with submit_label=submit_label cancel_url=cancel_url actions_container_class=actions_container_class form_method=form_method show_form_errors_alert=show_form_errors_alert show_non_field_errors=show_non_field_errors submit_button_class=submit_button_class show_actions=show_actions %}
+      </section>
+      <article class="info-card">
+        <div class="resource-icon"><i class="bi bi-cash-stack"></i></div>
+        <h3 class="h5 mb-3">{{ meta.titulo }}</h3>
+        <p class="text-secondary mb-3">{{ meta.descricao|default:"Meta financeira cadastrada para acompanhamento." }}</p>
+        <div class="list-item">
+          <strong>Valor atual</strong>
+          <div class="text-secondary mt-2">R$ {{ meta.valor_atual|moeda_br }}</div>
+        </div>
+        <div class="list-item">
+          <strong>Valor alvo</strong>
+          <div class="text-secondary mt-2">R$ {{ meta.valor_alvo|moeda_br }}</div>
+        </div>
+        <div class="list-item">
+          <strong>Restante</strong>
+          <div class="text-secondary mt-2">R$ {{ meta.valor_restante|moeda_br }}</div>
+        </div>
+      </article>
+    </section>
+
+  {% elif form_variant == "contato" %}
+    <section class="content-grid">
+      <div class="form-shell">
+        <div class="section-title mb-2">{{ page_title }}</div>
+        <p class="section-copy mb-4">{{ page_subtitle }}</p>
+        {% include "components/forms.html" with submit_label=submit_label cancel_url=cancel_url actions_container_class=actions_container_class form_method=form_method show_form_errors_alert=show_form_errors_alert show_non_field_errors=show_non_field_errors submit_button_class=submit_button_class show_actions=show_actions %}
+      </div>
+      <article class="info-card">
+        <div class="resource-icon"><i class="bi bi-headset"></i></div>
+        <h3 class="h5 mb-3">Canal de suporte</h3>
+        <div class="list-item">
+          <strong>E-mail</strong>
+          <div class="text-secondary">suporte@fintrack.local</div>
+        </div>
+        <div class="list-item">
+          <strong>Horario</strong>
+          <div class="text-secondary">Seg a Sex, 08h as 18h</div>
+        </div>
+        <div class="list-item">
+          <strong>Tempo medio</strong>
+          <div class="text-secondary">Ate 1 dia util</div>
+        </div>
+      </article>
+    </section>
+
+  {% elif form_variant == "auth_login" %}
+    <section class="form-shell">
+      <div class="section-title mb-2">{{ page_title }}</div>
+      <p class="section-copy mb-4">{{ page_subtitle }}</p>
+      {% include "components/forms.html" with submit_label=submit_label cancel_url=cancel_url actions_container_class=actions_container_class form_method=form_method show_form_errors_alert=show_form_errors_alert show_non_field_errors=show_non_field_errors submit_button_class=submit_button_class show_actions=show_actions %}
+      <div class="mt-4 text-secondary">
+        Ainda nao tem conta?
+        <a href="{% url 'cadastro' %}" class="text-decoration-none">Criar cadastro</a>
+      </div>
+    </section>
+
+  {% elif form_variant == "auth_cadastro" %}
+    <section class="form-shell">
+      <div class="section-title mb-2">SignUp</div>
+      <p class="section-copy mb-4">{{ page_subtitle }}</p>
+      {% include "components/forms.html" with submit_label=submit_label cancel_url=cancel_url actions_container_class=actions_container_class form_method=form_method show_form_errors_alert=show_form_errors_alert show_non_field_errors=show_non_field_errors submit_button_class=submit_button_class show_actions=show_actions %}
+      <div class="mt-4 text-secondary">
+        Ja possui acesso?
+        <a href="{% url 'login' %}" class="text-decoration-none">Entrar agora</a>
+      </div>
+    </section>
+
+  {% else %}
+    <section class="form-shell">
+      <div class="section-title mb-2">{{ page_title }}</div>
+      <p class="section-copy mb-4">{{ page_subtitle }}</p>
+      {% include "components/forms.html" with submit_label=submit_label cancel_url=cancel_url actions_container_class=actions_container_class form_method=form_method show_form_errors_alert=show_form_errors_alert show_non_field_errors=show_non_field_errors submit_button_class=submit_button_class show_actions=show_actions %}
+    </section>
+  {% endif %}
+{% endblock %}

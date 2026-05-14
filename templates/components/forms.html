@@ -1,0 +1,42 @@
+{% load crispy_forms_tags %}
+{# Formulário reutilizável com Crispy (Bootstrap 5). O <form> fica aqui; helper com form_tag=False nos forms. #}
+<form
+  {% if form_html_id %}id="{{ form_html_id }}"{% endif %}
+  method="{{ form_method|default:'post' }}"
+  class="{{ form_css_class|default:'row g-3' }}"
+  {% if form_action %}action="{{ form_action }}"{% endif %}
+  {% if form_enctype %}enctype="{{ form_enctype }}"{% endif %}
+>
+  {% if form_method|default:'post'|lower != 'get' %}
+    {% csrf_token %}
+  {% endif %}
+
+  {% if show_form_errors_alert|default:False %}
+    {% if form.errors %}
+      <div class="col-12 alert alert-danger mb-0" role="alert">
+        Ajuste os filtros: {{ form.errors.as_text }}
+      </div>
+    {% endif %}
+  {% endif %}
+
+  {% if show_non_field_errors|default:True %}
+    {% if form.non_field_errors %}
+      <div class="col-12 alert alert-danger" role="alert">
+        {% for err in form.non_field_errors %}{{ err }}{% if not forloop.last %} {% endif %}{% endfor %}
+      </div>
+    {% endif %}
+  {% endif %}
+
+  {% crispy form %}
+
+  {% if show_actions|default:True %}
+    <div class="col-12 {{ actions_container_class|default:'d-flex flex-wrap gap-2' }}">
+      {% if submit_label %}
+        <button type="submit" class="{{ submit_button_class|default:'btn-accent' }}">{{ submit_label }}</button>
+      {% endif %}
+      {% if cancel_url %}
+        <a href="{{ cancel_url }}" class="btn-outline-surface">{{ cancel_label|default:'Cancelar' }}</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</form>

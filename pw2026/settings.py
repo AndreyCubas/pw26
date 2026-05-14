@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "crispy_forms",
+    "crispy_bootstrap5",
 
     # Ativar meus apps/módulos
     "website.apps.WebsiteConfig",
@@ -156,6 +158,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 # https://dontpad.com/zottesso/pw
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap5",)
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 # Default primary key field type

@@ -1,0 +1,23 @@
+{% extends "website/modelo.html" %}
+
+{% block title %}{{ page_title }} | FinTrack Django{% endblock %}
+
+{% block page_actions %}
+  {% if page_action_url %}
+    <a href="{{ page_action_url }}" class="btn-outline-surface">{{ page_action_label }}</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <section class="form-shell">
+    <div class="section-title mb-2">{{ page_title }}</div>
+    <p class="section-copy mb-4">{{ confirmation_html }}</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="btn-accent" style="{{ submit_extra_style }}">{{ submit_label }}</button>
+        <a href="{{ cancel_url }}" class="btn-outline-surface">{{ cancel_label }}</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}
